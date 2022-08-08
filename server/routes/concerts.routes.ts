@@ -17,15 +17,19 @@ router.route('/concerts').get((req, res) => {
   res.send(concerts);
 });
 
-router.route('/concerts/:id').get((req, res) => {
-  const requestedData = concerts.find(data => data.id === req.params.id)
+router.route('/concerts/:id').get((req, res, next) => {
+  const requestedData = concerts.find(data => data.id === req.params.id);
+  if (!requestedData) {
+    next();
+  }
+  res.send(requestedData);
 });
 
 router.route('/concerts').post((req, res) => {
   const newConcertData: concertData = req.body;
   const newConcertId = shortid();
   concerts.push({id: newConcertId, ...newConcertData});
-  res.render(`New concert added! Check it out at /api/concerts/${newConcertId}.`); 
+  res.send(`New concert added! Check it out at /api/concerts/${newConcertId}.`); 
 });
 
 router.route('/concerts/:id').put((req, res, next) => {
@@ -35,7 +39,7 @@ router.route('/concerts/:id').put((req, res, next) => {
     next();
   }
   concerts[concertToEditIdx] = {id: req.params.id, ...newConcertData};
-  res.render(`Concert data updated! Check it out at /api/concerts/${concertToEditIdx}.`); 
+  res.send(`Concert data updated! Check it out at /api/concerts/${req.params.id}.`); 
 });
 
 router.route('/concerts/:id').delete((req, res, next) => {
@@ -44,7 +48,7 @@ router.route('/concerts/:id').delete((req, res, next) => {
     next();
   }
   concerts.splice(concertToDeleteIdx, 1);
-  res.send(`Concert data removed. Removed concert ID: ${concertToDeleteIdx}`);
+  res.send(`Concert data removed. Removed concert ID: ${req.params.id}`);
 })
 
 
