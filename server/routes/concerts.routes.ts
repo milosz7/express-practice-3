@@ -39,7 +39,7 @@ router.route('/concerts').post((req, res, next) => {
     const newConcertId = shortid();
     concerts.push({ id: newConcertId, ...newConcertData });
     res.send(`New concert added! Check it out at /api/concerts/${newConcertId}.`);  
-  }
+  } else
   next(badRequestErr)
 });
 
@@ -53,7 +53,7 @@ router.route('/concerts/:id').put((req, res, next) => {
   if (performer && genre && price && day && image) {
     concerts[concertToEditIdx] = { id: req.params.id, ...newConcertData };
     res.send(`Concert data updated! Check it out at /api/concerts/${req.params.id}.`);
-  }
+  } else
   next(badRequestErr)
 });
 

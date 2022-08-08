@@ -39,7 +39,7 @@ router.route('/seats').post((req, res, next) => {
     const newDataId = shortid();
     seats.push({ id: newDataId, ...postedData });
     res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`);
-  }
+  } else
   next(badRequestErr);
 });
 
@@ -53,7 +53,7 @@ router.route('/seats/:id').put((req, res, next) => {
   if (day && client && seat && email) {
     seats[datatoEditIdx] = { id: req.params.id, ...newData };
     res.send(`Updated seat data with ID: ${req.params.id}`);
-  }
+  } else
   next(badRequestErr)
 });
 

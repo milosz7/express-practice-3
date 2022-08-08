@@ -44,7 +44,7 @@ router.route('/testimonials').post((req, res, next) => {
   if (author && text) {
     testimonials.push({ ...postedData, id: newDataId });
     res.send(`New testimonial added! Check it out at /api/testimonials/${newDataId}`);
-  }
+  } else
   next(badRequestErr);
 });
 
@@ -58,7 +58,7 @@ router.route('/testimonials/:id').put((req, res, next) => {
   if (author && text) {
     testimonials[dataToEditIdx] = { id: req.params.id, ...newData };
     res.send(`Updated a testimonial with ID: ${req.params.id}`);
-  }
+  } else
   next(badRequestErr)
 });
 
