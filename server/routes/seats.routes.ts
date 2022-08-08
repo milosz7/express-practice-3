@@ -13,12 +13,15 @@ const app = express();
 const router = express.Router();
 const seats = db.seats;
 
-router.route('/seats').get((req, res) => {
+router.route('/seats').get((req, res, next) => {
+  if (seats.length === 0) {
+    next();
+  }
   res.send(seats);
 });
 
 router.route('/seats/:id').get((req, res, next) => {
-  const requestedData = seats.find(data => data.id === req.params.id);
+  const requestedData = seats.find((data) => data.id === req.params.id);
   if (!requestedData) {
     next();
   }
@@ -27,23 +30,33 @@ router.route('/seats/:id').get((req, res, next) => {
 
 router.route('/seats').post((req, res) => {
   const postedData: seatData = req.body;
-  const newDataId = shortid();
-  seats.push({id: newDataId, ...postedData});
-  res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`)
+  const { day, seat, client, email } = postedData;
+  if (day && client && seat && email) {
+    const newDataId = shortid();
+    seats.push({ id: newDataId, ...postedData });
+    res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`);
+  }
+  res.status(400);
+  res.send('Please provide all necessary data!');
 });
 
 router.route('/seats/:id').put((req, res, next) => {
-  const newData: seatData = req.body;
-  const datatoEditIdx = seats.findIndex(data => data.id === req.params.id);
+  const datatoEditIdx = seats.findIndex((data) => data.id === req.params.id);
   if (datatoEditIdx === -1) {
-    next()
+    next();
   }
-  seats[datatoEditIdx] = {id: req.params.id, ...newData};
-  res.send(`Updated seat data with ID: ${req.params.id}`)
+  const newData: seatData = req.body;
+  const { day, seat, client, email } = newData;
+  if (day && client && seat && email) {
+    seats[datatoEditIdx] = { id: req.params.id, ...newData };
+    res.send(`Updated seat data with ID: ${req.params.id}`);
+  }
+  res.status(400);
+  res.send('Please provide all necessary data!');
 });
 
 router.route('/seats/:id').delete((req, res, next) => {
-  const dataToRemoveIdx = seats.findIndex(data => data.id === req.params.id);
+  const dataToRemoveIdx = seats.findIndex((data) => data.id === req.params.id);
   if (dataToRemoveIdx === -1) {
     next();
   }
