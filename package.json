@@ -7,9 +7,8 @@
     "start": "node server/server.js",
     "build": "tsc",
     "dev": "trap 'npm run postdev' INT ; npm-run-all -p dev:*",
-    "dev:build": "tsc -w --project client.tsconfig.json",
     "dev:server": "nodemon server/server.ts",
-    "postdev": "lsof -i ${PORT-:8000} -t | xargs kill ; rm ./client/*.js"
+    "postdev": "lsof -i ${PORT-:8000} -t | xargs kill"
   },
   "keywords": [],
   "author": "",
