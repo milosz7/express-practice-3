@@ -2,6 +2,7 @@ import express, { NextFunction } from 'express';
 import testimonialRoutes from './routes/testimonials.routes';
 import concertsRoutes from './routes/concerts.routes';
 import seatsRoutes from './routes/seats.routes';
+import cors from 'cors';
 
 interface apiError {
   status: number;
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cors());
 app.use('/api', testimonialRoutes);
 app.use('/api', concertsRoutes);
 app.use('/api', seatsRoutes);
