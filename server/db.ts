@@ -30,12 +30,12 @@ const db = {
     },
   ],
   seats: [
-    { id: 1, day: 1, seat: 3, client: 'Amanda Doe', email: 'amandadoe@example.com' },
-    { id: 2, day: 1, seat: 9, client: 'Curtis Johnson', email: 'curtisj@example.com' },
-    { id: 3, day: 1, seat: 10, client: 'Felix McManara', email: 'felxim98@example.com' },
-    { id: 4, day: 1, seat: 26, client: 'Fauna Keithrins', email: 'mefauna312@example.com' },
-    { id: 5, day: 2, seat: 1, client: 'Felix McManara', email: 'felxim98@example.com' },
-    { id: 6, day: 2, seat: 2, client: 'Molier Lo Celso', email: 'moiler.lo.celso@example.com' },
+    { id: '1', day: 1, seat: 3, client: 'Amanda Doe', email: 'amandadoe@example.com' },
+    { id: '2', day: 1, seat: 9, client: 'Curtis Johnson', email: 'curtisj@example.com' },
+    { id: '3', day: 1, seat: 10, client: 'Felix McManara', email: 'felxim98@example.com' },
+    { id: '4', day: 1, seat: 26, client: 'Fauna Keithrins', email: 'mefauna312@example.com' },
+    { id: '5', day: 2, seat: 1, client: 'Felix McManara', email: 'felxim98@example.com' },
+    { id: '6', day: 2, seat: 2, client: 'Molier Lo Celso', email: 'moiler.lo.celso@example.com' },
   ],
 };
 
