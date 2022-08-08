@@ -9,6 +9,10 @@ interface testimonial {
 
 const router = express.Router();
 const testimonials = db.testimonials;
+const badRequestErr = {
+  status: 400,
+  message: 'Please provide all necessary data!'
+}
 
 router.route('/testimonials').get((req, res, next) => {
   if (testimonials.length === 0) {
@@ -33,7 +37,7 @@ router.route('/testimonials/:id').get((req, res, next) => {
   res.send(requestedData);
 });
 
-router.route('/testimonials').post((req, res) => {
+router.route('/testimonials').post((req, res, next) => {
   const postedData: testimonial = req.body;
   const newDataId = shortid();
   const { author, text } = postedData;
@@ -41,8 +45,7 @@ router.route('/testimonials').post((req, res) => {
     testimonials.push({ ...postedData, id: newDataId });
     res.send(`New testimonial added! Check it out at /api/testimonials/${newDataId}`);
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr);
 });
 
 router.route('/testimonials/:id').put((req, res, next) => {
@@ -56,8 +59,7 @@ router.route('/testimonials/:id').put((req, res, next) => {
     testimonials[dataToEditIdx] = { id: req.params.id, ...newData };
     res.send(`Updated a testimonial with ID: ${req.params.id}`);
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr)
 });
 
 router.route('/testimonials/:id').delete((req, res, next) => {

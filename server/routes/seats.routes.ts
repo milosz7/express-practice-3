@@ -12,6 +12,10 @@ interface seatData {
 const app = express();
 const router = express.Router();
 const seats = db.seats;
+const badRequestErr = {
+  status: 400,
+  message: 'Please provide all necessary data!'
+}
 
 router.route('/seats').get((req, res, next) => {
   if (seats.length === 0) {
@@ -28,7 +32,7 @@ router.route('/seats/:id').get((req, res, next) => {
   res.send(requestedData);
 });
 
-router.route('/seats').post((req, res) => {
+router.route('/seats').post((req, res, next) => {
   const postedData: seatData = req.body;
   const { day, seat, client, email } = postedData;
   if (day && client && seat && email) {
@@ -36,8 +40,7 @@ router.route('/seats').post((req, res) => {
     seats.push({ id: newDataId, ...postedData });
     res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`);
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr);
 });
 
 router.route('/seats/:id').put((req, res, next) => {
@@ -51,8 +54,7 @@ router.route('/seats/:id').put((req, res, next) => {
     seats[datatoEditIdx] = { id: req.params.id, ...newData };
     res.send(`Updated seat data with ID: ${req.params.id}`);
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr)
 });
 
 router.route('/seats/:id').delete((req, res, next) => {

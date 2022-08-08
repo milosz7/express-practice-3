@@ -12,6 +12,10 @@ interface concertData {
 
 const router = express.Router();
 const concerts = db.concerts;
+const badRequestErr = {
+  status: 400,
+  message: 'Please provide all necessary data!'
+}
 
 router.route('/concerts').get((req, res, next) => {
   if (concerts.length === 0) {
@@ -28,7 +32,7 @@ router.route('/concerts/:id').get((req, res, next) => {
   res.send(requestedData);
 });
 
-router.route('/concerts').post((req, res) => {
+router.route('/concerts').post((req, res, next) => {
   const newConcertData: concertData = req.body;
   const { performer, genre, price, day, image } = newConcertData;
   if (performer && genre && price && day && image) {
@@ -36,8 +40,7 @@ router.route('/concerts').post((req, res) => {
     concerts.push({ id: newConcertId, ...newConcertData });
     res.send(`New concert added! Check it out at /api/concerts/${newConcertId}.`);  
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr)
 });
 
 router.route('/concerts/:id').put((req, res, next) => {
@@ -51,8 +54,7 @@ router.route('/concerts/:id').put((req, res, next) => {
     concerts[concertToEditIdx] = { id: req.params.id, ...newConcertData };
     res.send(`Concert data updated! Check it out at /api/concerts/${req.params.id}.`);
   }
-  res.status(400);
-  res.send('Please provide all necessary data!');
+  next(badRequestErr)
 });
 
 router.route('/concerts/:id').delete((req, res, next) => {
