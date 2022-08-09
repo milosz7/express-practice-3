@@ -1,6 +1,7 @@
 import express from 'express';
 import db from '../db';
 import shortid from 'shortid';
+import { badRequestErr, conflictErr } from '../errors';
 
 interface seatData {
   day: number;
@@ -12,10 +13,6 @@ interface seatData {
 const app = express();
 const router = express.Router();
 const seats = db.seats;
-const badRequestErr = {
-  status: 400,
-  message: 'Please provide all necessary data!'
-}
 
 router.route('/seats').get((req, res, next) => {
   if (seats.length === 0) {
@@ -35,7 +32,9 @@ router.route('/seats/:id').get((req, res, next) => {
 router.route('/seats').post((req, res, next) => {
   const postedData: seatData = req.body;
   const { day, seat, client, email } = postedData;
-  if (day && client && seat && email) {
+  if (seats.find(data => data.seat === seat && data.day === day)) { 
+    next(conflictErr);
+  } else if (day && client && seat && email) {
     const newDataId = shortid();
     seats.push({ id: newDataId, ...postedData });
     res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`);
