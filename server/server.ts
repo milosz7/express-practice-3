@@ -4,6 +4,7 @@ import concertsRoutes from './routes/concerts.routes';
 import seatsRoutes from './routes/seats.routes';
 import cors from 'cors';
 import { notFoundErr } from './errors'
+import path from 'path'
 
 interface apiError {
   status: number;
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, '../client/build')));
 app.use(cors());
 app.use('/api', testimonialRoutes);
 app.use('/api', concertsRoutes);
@@ -26,8 +28,12 @@ app.use((err: apiError, req: express.Request, res: express.Response, next: NextF
   }
     res.status(404);
     res.send(notFoundErr);
-  })
+  });
 
-app.listen(8000, () => {
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
+app.listen(process.env.PORT || 8000, () => {
   console.log('Running on port 8000');
-})
+});
