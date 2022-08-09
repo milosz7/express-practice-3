@@ -3,6 +3,7 @@ import testimonialRoutes from './routes/testimonials.routes';
 import concertsRoutes from './routes/concerts.routes';
 import seatsRoutes from './routes/seats.routes';
 import cors from 'cors';
+import { notFoundErr } from './errors'
 
 interface apiError {
   status: number;
@@ -19,16 +20,13 @@ app.use('/api', concertsRoutes);
 app.use('/api', seatsRoutes);
 
 app.use((err: apiError, req: express.Request, res: express.Response, next: NextFunction) => {
-  if (err.status === 400) {
-    res.status(400);
-    res.send(err);
-  } else {
-    res.status(404);
-    const noData = {status: 404, message: 'Not found'};
-    res.send(noData);
+  if (err.status) {
+    res.status(err.status);
+    return res.send(err.message);
   }
-  
-})
+    res.status(404);
+    res.send(notFoundErr);
+  })
 
 app.listen(8000, () => {
   console.log('Running on port 8000');
