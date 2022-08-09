@@ -10,7 +10,6 @@ const OrderTicketForm = () => {
   const dispatch = useDispatch();
   const requests = useSelector(getRequests);
   const [orderDay, setOrderDay] = useState(1);
-  console.log(requests);
 
   const [order, setOrder] = useState({
     client: '',
