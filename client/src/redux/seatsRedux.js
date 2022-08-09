@@ -39,7 +39,7 @@ export const loadSeatsRequest = () => {
       dispatch(endRequest({ name: 'LOAD_SEATS' }));
 
     } catch(e) {
-      dispatch(errorRequest({ name: 'LOAD_SEATS', error: e.message }));
+      dispatch(errorRequest({ name: 'LOAD_SEATS', error: e.response.data }));
     }
 
   };
@@ -57,7 +57,7 @@ export const addSeatRequest = (seat) => {
       dispatch(endRequest({ name: 'ADD_SEAT' }));
 
     } catch(e) {
-      dispatch(errorRequest({ name: 'ADD_SEAT', error: e.message }));
+      dispatch(errorRequest({ name: 'ADD_SEAT', error: e.response.data }));
     }
 
   };
