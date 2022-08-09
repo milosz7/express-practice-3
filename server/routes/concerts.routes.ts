@@ -1,6 +1,7 @@
 import express from 'express';
 import db from '../db';
 import shortid from 'shortid';
+import { badRequestErr } from '../errors';
 
 interface concertData {
   performer: string;
@@ -12,10 +13,6 @@ interface concertData {
 
 const router = express.Router();
 const concerts = db.concerts;
-const badRequestErr = {
-  status: 400,
-  message: 'Please provide all necessary data!'
-}
 
 router.route('/concerts').get((req, res, next) => {
   if (concerts.length === 0) {
