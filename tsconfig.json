@@ -11,6 +11,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+    "typeRoots": ["./types"]
+  },
+  "ts-node": {
+    "files": true
   },
   "exclude": ["node_modules", "client"],
   "include": ["./server/**/*.ts"]
