@@ -45,6 +45,10 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
     return seats.some((item) => item.seat === seatId && item.day === chosenDay);
   };
 
+  const countTaken = () => {
+    return seats.filter((seat) => seat.day === chosenDay).length;
+  };
+
   const prepareSeat = (seatId) => {
     if (seatId === chosenSeat)
       return (
@@ -82,15 +86,14 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
       <small id="pickHelpTwo" className="form-text text-muted ml-2 mb-4">
         <Button outline color="primary" /> – it's empty
       </small>
-      {(isConnected && !error) &&
-      <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i + 1))}</div>
-      }
-      {(!isConnected && !error) &&
-      <Progress animated color="primary" value={50} />
-      }
-      {error &&
-      <Alert color="warning">Couldn't load seats...</Alert>
-      }
+      {isConnected && !error && (
+        <>
+          <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i + 1))}</div>
+          <small className='text-muted ml-1'>{`Seats taken: ${countTaken()}/50`}</small>
+        </>
+      )}
+      {!isConnected && !error && <Progress animated color="primary" value={50} />}
+      {error && <Alert color="warning">Couldn't load seats...</Alert>}
     </div>
   );
 };
