@@ -37,6 +37,7 @@ router.route('/seats').post((req, res, next) => {
   } else if (day && client && seat && email) {
     const newDataId = shortid();
     seats.push({ id: newDataId, ...postedData });
+    req.io.emit('updateData', seats);
     res.send(`Seat data added! Check it out at: /api/seats/${newDataId}`);
   } else
   next(badRequestErr);
