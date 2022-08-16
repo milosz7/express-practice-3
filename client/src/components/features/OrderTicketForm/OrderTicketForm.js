@@ -1,13 +1,12 @@
 import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Progress } from 'reactstrap';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addSeatRequest, getRequests, loadSeatsRequest } from '../../../redux/seatsRedux';
+import { addSeatRequest, getRequests } from '../../../redux/seatsRedux';
 import './OrderTicketForm.scss';
 import SeatChooser from './../SeatChooser/SeatChooser';
 
 const OrderTicketForm = () => {
   const dispatch = useDispatch();
-
   const requests = useSelector(getRequests);
   const [orderDay, setOrderDay] = useState(1);
 
@@ -45,7 +44,7 @@ const OrderTicketForm = () => {
         email: '',
         day: orderDay,
         seat: '',
-      });;
+      });
       setIsError(false);
     } else {
       setIsError(true);
