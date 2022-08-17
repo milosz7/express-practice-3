@@ -2,6 +2,7 @@ import express from 'express';
 import db from '../db';
 import shortid from 'shortid';
 import { badRequestErr, conflictErr } from '../errors';
+import { validateEmail } from '../helpers';
 
 interface seatData {
   day: number;
@@ -34,7 +35,7 @@ router.route('/seats').post((req, res, next) => {
   const { day, seat, client, email } = postedData;
   if (seats.find(data => data.seat === seat && data.day === day)) { 
     next(conflictErr);
-  } else if (day && client && seat && email) {
+  } else if (day && client && seat && validateEmail(email)) {
     const newDataId = shortid();
     seats.push({ id: newDataId, ...postedData });
     req.io.emit('updateData', seats);
@@ -50,7 +51,7 @@ router.route('/seats/:id').put((req, res, next) => {
   }
   const newData: seatData = req.body;
   const { day, seat, client, email } = newData;
-  if (day && client && seat && email) {
+  if (day && client && seat && validateEmail(email)) {
     seats[datatoEditIdx] = { id: req.params.id, ...newData };
     res.send(`Updated seat data with ID: ${req.params.id}`);
   } else
