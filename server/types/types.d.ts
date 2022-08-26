@@ -1,6 +1,8 @@
 import { Server } from 'socket.io';
 import { Response } from 'express';
 import { ConcertModel } from '../models/concerts.model';
+import { TestimonialModel } from '../models/testimonials.model';
+import { SeatModel } from '../models/seats.model';
 
 declare global {
   namespace Express {
@@ -8,6 +10,11 @@ declare global {
       io: Server;
     }
   }
+}
+
+export interface ErrorData {
+  message: string;
+  status: number;
 }
 
 export interface ConcertDataReq {
@@ -18,9 +25,29 @@ export interface ConcertDataReq {
   image: string | undefined;
 }
 
-export interface ErrorData {
-  message: string;
-  status: number;
+export type ConcertResponse = Response<
+  ConcertModel | ConcertModel[],
+  Record<string, ConcertModel>
+>;
+
+export interface TestimonialDataReq {
+  author: string | undefined;
+  text: string | undefined;
 }
 
-export type ConcertResponse = Response<ConcertModel | ConcertModel[], Record<string, ConcertModel>>;
+export type TestimonialResponse = Response<
+  TestimonialModel | TestimonialModel[],
+  Record<string, TestimonialModel>
+>;
+
+export interface SeatsDataReq {
+  day: number | undefined;
+  seat: number | undefined;
+  client: string | undefined;
+  email: string | undefined;
+}
+
+export type SeatResponse = Response<
+  SeatModel | SeatModel[],
+  Record<string, SeatModel>
+>;
