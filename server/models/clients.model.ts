@@ -1,8 +1,9 @@
 import { Schema, model, InferSchemaType } from 'mongoose';
+import { validateEmail } from '../helpers';
 
 const clientSchema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, validate: validateEmail },
 });
 
 export type ClientModel = InferSchemaType<typeof clientSchema>;
