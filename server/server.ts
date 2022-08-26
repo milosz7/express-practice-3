@@ -3,10 +3,10 @@ import testimonialRoutes from './routes/testimonials.routes';
 import concertsRoutes from './routes/concerts.routes';
 import seatsRoutes from './routes/seats.routes';
 import cors from 'cors';
-import { notFoundErr } from './errors';
 import path from 'path';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
+import Seat from './models/seats.model';
 
 interface apiError {
   status: number;
@@ -57,6 +57,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
-io.on('connection', (socket) => {
-  // socket.emit('updateData', db.seats)
+io.on('connection', async (socket) => {
+  const seatsToEmit = await Seat.find({});
+  socket.emit('updateData', seatsToEmit);
 });
