@@ -11,7 +11,7 @@ const OrderTicketForm = () => {
   const [orderDay, setOrderDay] = useState(1);
 
   const [order, setOrder] = useState({
-    client: '',
+    name: '',
     email: '',
     day: orderDay,
     seat: ''
@@ -37,10 +37,10 @@ const OrderTicketForm = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
-    if(order.client && order.email && order.day && order.seat) {
+    if(order.name && order.email && order.day && order.seat) {
       await dispatch(addSeatRequest(order));
       setOrder({
-        client: '',
+        name: '',
         email: '',
         day: orderDay,
         seat: '',
@@ -61,7 +61,7 @@ const OrderTicketForm = () => {
           { (requests['ADD_SEAT'] && requests['ADD_SEAT'].pending) && <Progress animated className="mb-5" color="primary" value={75} /> }
           <FormGroup>
             <Label for="clientEmail">Name</Label>
-            <Input type="text" value={order.client} name="client" onChange={updateTextField} id="clientName" placeholder="John Doe" />
+            <Input type="text" value={order.name} name="name" onChange={updateTextField} id="clientName" placeholder="John Doe" />
           </FormGroup>
           <FormGroup>
             <Label for="clientEmail">Email</Label>
