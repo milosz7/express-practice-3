@@ -6,7 +6,7 @@ import cors from 'cors';
 import { notFoundErr } from './errors'
 import path from 'path'
 import { Server } from 'socket.io';
-import db from './db';
+import mongoose from 'mongoose';
 
 interface apiError {
   status: number;
@@ -14,6 +14,17 @@ interface apiError {
 }
 
 const app = express();
+
+const uri = 'mongodb://127.0.0.1:27017/NewWaveDB'
+
+mongoose.connect(uri)
+const db = mongoose.connection
+
+db.once('open', () => {
+  console.log('Connected to database.')
+});
+
+db.on('error', (e: Error) => console.log(e))
 
 const server = app.listen(process.env.PORT || 8000, () => {
   console.log('Running on port 8000');
@@ -51,6 +62,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
+
+
 io.on('connection', (socket) => {
-  socket.emit('updateData', db.seats)
+  // socket.emit('updateData', db)
 });
