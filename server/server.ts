@@ -7,6 +7,7 @@ import path from 'path';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import Seat from './models/seats.model';
+import dotenv from 'dotenv';
 
 interface apiError {
   status: number;
@@ -15,7 +16,8 @@ interface apiError {
 
 const app = express();
 
-const uri = 'mongodb://127.0.0.1:27017/NewWaveDB';
+dotenv.config();
+const uri = process.env.DB_CONN_STRING;
 
 mongoose.connect(uri);
 const db = mongoose.connection;
