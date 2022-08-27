@@ -3,7 +3,7 @@ import { validateEmail } from '../helpers';
 
 const clientSchema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, validate: validateEmail },
+  email: { type: String, required: true, validate: validateEmail, trim: true },
 });
 
 export type ClientModel = InferSchemaType<typeof clientSchema>;

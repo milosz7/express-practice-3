@@ -33,8 +33,10 @@ class SeatsMethods {
       const { day, seat, name, email }: SeatsDataReq = req.body;
       const isTaken = await Seat.findOne({ $and: [{ day: { $eq: day }, seat: { $eq: seat } }] });
       if (isTaken) return next({ status: 400, message: 'Seat is already taken!' });
-
-      const newClient = new Client({ name, email, _id: new Types.ObjectId() });
+      const checkClient = await Client.findOne({
+        $and: [{ name: { $eq: name } }, { email: { $eq: email } }],
+      });
+      const newClient = checkClient || new Client({ name, email, _id: new Types.ObjectId() });
       const newSeat = new Seat({ day, seat, clientId: newClient._id });
       const clientErr = newClient.validateSync();
       const seatErr = newSeat.validateSync();
@@ -99,7 +101,7 @@ class SeatsMethods {
       if (!seatToDelete) return next(notFoundErr);
       const clientRelatedSeats = await Seat.find({ clientId: { $eq: seatToDelete.clientId } });
       await seatToDelete.delete();
-      req.io.emit('updateData', await Seat.find({}))
+      req.io.emit('updateData', await Seat.find({}));
       if (clientRelatedSeats.length === 1) {
         const relatedClient = await Client.findById(seatToDelete.clientId);
         if (relatedClient) {
