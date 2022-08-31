@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' export NODE_ENV=test && find ./server/**/* -name '*.test.ts' | xargs mocha -r ts-node/register --watch --watch-files './**/*.ts'",
     "start": "node server/server.js",
     "heroku-prebuild": "npm install",
     "build": "tsc && cd client && npm install --force && npm run build",
-    "dev": "trap 'npm run postdev' INT ; npm-run-all -p dev:*",
+    "dev": "export NODE_ENV=development npm run test && trap 'npm run postdev' INT ; npm-run-all -p dev:*",
     "dev:server": "nodemon server/server.ts",
     "postdev": "lsof -i ${PORT-:8000} -t | xargs kill"
   },
