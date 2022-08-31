@@ -7,7 +7,7 @@ import path from 'path';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import Seat from './models/seats.model';
-import dotenv from 'dotenv';
+import { declareUri } from './helpers';
 
 interface apiError {
   status: number;
@@ -16,20 +16,19 @@ interface apiError {
 
 const app = express();
 
-dotenv.config();
-const uri = process.env.DB_CONN_STRING;
+const uri = declareUri();
 
 mongoose.connect(uri);
 const db = mongoose.connection;
 
 db.once('open', () => {
-  console.log('Connected to database.');
+  if (process.env.NODE_ENV === 'development') console.log('Connected to database.');
 });
 
 db.on('error', (e: Error) => console.log(e));
 
-const server = app.listen(process.env.PORT || 8000, () => {
-  console.log('Running on port 8000');
+export const server = app.listen(process.env.PORT || 8000, () => {
+  if (process.env.NODE_ENV === 'development') console.log('Running on port 8000');
 });
 
 const io = new Server(server, {
@@ -52,7 +51,7 @@ app.use('/api', concertsRoutes);
 app.use('/api', seatsRoutes);
 
 app.use((err: apiError, req: express.Request, res: express.Response, next: NextFunction) => {
-  return res.json(err.message);
+  return res.status(err.status).json(err.message);
 });
 
 app.get('*', (req, res) => {
