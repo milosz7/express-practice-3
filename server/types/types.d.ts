@@ -13,7 +13,7 @@ declare global {
   }
   namespace NodeJS {
     interface ProcessEnv {
-      DB_CONN_STRING: string
+      DB_CONN_STRING: string;
     }
   }
 }
@@ -56,3 +56,11 @@ export type ExtendedSeatResponse = Response<
   { deletedSeat: SeatModel; deletedClient: ClientModel },
   Record<string, { deletedSeat: SeatModel; deletedClient: ClientModel }>
 >;
+
+export interface PriceRangeObj {
+  $lte?: number;
+  $gte?: number;
+}
+export interface PossibleQueries {
+  [key: string]: number | string | PriceRangeObj;
+}

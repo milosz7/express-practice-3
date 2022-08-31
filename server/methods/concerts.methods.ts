@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
-import { ErrorData, ConcertResponse, ConcertDataReq } from '../types/types';
+import {
+  ErrorData,
+  ConcertResponse,
+  ConcertDataReq,
+  PossibleQueries,
+  PriceRangeObj,
+} from '../types/types';
 import Concert from '../models/concerts.model';
 import { notFoundErr } from '../errors';
 
@@ -8,7 +14,35 @@ class ConcertMethods {
 
   static async getAll(req: Request, res: ConcertResponse, next: (err: ErrorData) => void) {
     try {
-      const concertsData = await Concert.find({});
+      const query = req.query;
+      const dbQuery: PossibleQueries = {};
+      if (Object.keys(query).length) {
+        if (query.max || query.min) {
+          const priceQuery: PriceRangeObj = {};
+          if (query.max && typeof query.max === 'string') {
+            priceQuery.$lte = parseInt(query.max);
+            delete query.max;
+          }
+          if (query.min && typeof query.min === 'string') {
+            priceQuery.$gte = parseInt(query.min);
+            delete query.min;
+          }
+          dbQuery.price = priceQuery;
+        }
+        Object.entries(req.query).forEach(([key, value]) => {
+          if (typeof value === 'string') {
+            if (value.includes('-')) {
+              dbQuery[key] = value.replace('-', ' ');
+            } else {
+              dbQuery[key] = parseInt(value) ? parseInt(value) : value;
+            }
+          }
+        });
+      }
+      const concertsData = await Concert.find(dbQuery).setOptions({strictQuery: false}).collation({
+        locale: 'en_US',
+        strength: 1,
+      });
       if (concertsData.length === 0) return next(notFoundErr);
       return res.json(concertsData);
     } catch (e) {
@@ -21,6 +55,28 @@ class ConcertMethods {
       const concertData = await Concert.findById(req.params.id);
       if (!concertData) return next(notFoundErr);
       return res.json(concertData);
+    } catch (e) {
+      if (e instanceof Error) next({ status: 500, message: e.message });
+    }
+  }
+
+  static async getByPerformer(req: Request, res: ConcertResponse, next: (err: ErrorData) => void) {
+    try {
+      const requestedPerformer = req.params.performer;
+      const performerConcerts = await Concert.find({ performer: requestedPerformer });
+      if (!performerConcerts) return next(notFoundErr);
+      return res.json(performerConcerts);
+    } catch (e) {
+      if (e instanceof Error) next({ status: 500, message: e.message });
+    }
+  }
+
+  static async getByGenre(req: Request, res: ConcertResponse, next: (err: ErrorData) => void) {
+    try {
+      const requestedGenre = req.params.genre;
+      const genreConcerts = await Concert.find({ genre: requestedGenre });
+      if (!genreConcerts) return next(notFoundErr);
+      return res.json(genreConcerts);
     } catch (e) {
       if (e instanceof Error) next({ status: 500, message: e.message });
     }
