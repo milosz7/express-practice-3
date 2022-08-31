@@ -60,28 +60,6 @@ class ConcertMethods {
     }
   }
 
-  static async getByPerformer(req: Request, res: ConcertResponse, next: (err: ErrorData) => void) {
-    try {
-      const requestedPerformer = req.params.performer;
-      const performerConcerts = await Concert.find({ performer: requestedPerformer });
-      if (!performerConcerts) return next(notFoundErr);
-      return res.json(performerConcerts);
-    } catch (e) {
-      if (e instanceof Error) next({ status: 500, message: e.message });
-    }
-  }
-
-  static async getByGenre(req: Request, res: ConcertResponse, next: (err: ErrorData) => void) {
-    try {
-      const requestedGenre = req.params.genre;
-      const genreConcerts = await Concert.find({ genre: requestedGenre });
-      if (!genreConcerts) return next(notFoundErr);
-      return res.json(genreConcerts);
-    } catch (e) {
-      if (e instanceof Error) next({ status: 500, message: e.message });
-    }
-  }
-
   static async postNew(req: Request, res: Response<string>, next: (err: ErrorData) => void) {
     const newConcertData: ConcertDataReq = req.body;
     try {
