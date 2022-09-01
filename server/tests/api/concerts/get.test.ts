@@ -90,18 +90,18 @@ describe('Concerts GET requests', () => {
       expect(body).to.have.lengthOf(expectedResult);
     }
   });
-  it('Should return no data when passed invalid query params', async () => {
+  it('Should return all data when passed invalid query params', async () => {
     const testCases = [
       '/api/concerts/?gen=r%26b&min25',
-      '/api/concerts/?genre=r%2b&mi5',
+      '/api/concerts/?gene=r%2b&mi5',
       '/api/concerts/?test=test',
     ];
     for (const url of testCases) {
       const { body, status }: { body: typeof Concert[]; status: number } = await chai
         .request(server)
         .get(url);
-      expect(status).to.eq(404);
-      expect(body).to.eq('Not found.');
+      expect(status).to.eq(200);
+      expect(body).to.have.lengthOf(6);
     }
   });
   after(async () => {
