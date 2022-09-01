@@ -17,33 +17,37 @@ class ConcertMethods {
     try {
       const query = req.query;
       const dbQuery: PossibleQueries = {};
-      if (Object.keys(query).length) {
-        if (query.max || query.min) {
-          const priceQuery: PriceRangeObj = {};
-          if (query.max && typeof query.max === 'string') {
-            priceQuery.$lte = parseInt(query.max);
-            delete query.max;
-          }
-          if (query.min && typeof query.min === 'string') {
-            priceQuery.$gte = parseInt(query.min);
-            delete query.min;
-          }
-          dbQuery.price = priceQuery;
+      const acceptedDataQueries = ['performer', 'genre', 'day'];
+      const acceptedPriceQueries = ['min', 'max'];
+      const filteredQueryKeys = Object.keys(query).filter((key) =>
+        acceptedDataQueries.concat(acceptedPriceQueries).includes(key)
+      );
+      if (filteredQueryKeys.includes('min') || filteredQueryKeys.includes('max')) {
+        const priceQuery: PriceRangeObj = {};
+        if (typeof query.max === 'string' && parseInt(query.max)) {
+          priceQuery.$lte = parseInt(query.max);
         }
-        Object.entries(req.query).forEach(([key, value]) => {
-          if (typeof value === 'string') {
-            if (value.includes('-')) {
-              dbQuery[key] = value.replace('-', ' ');
-            } else {
-              dbQuery[key] = parseInt(value) ? parseInt(value) : value;
-            }
-          }
-        });
+        if (typeof query.min === 'string' && parseInt(query.min)) {
+          priceQuery.$gte = parseInt(query.min);
+        }
+        dbQuery.price = priceQuery;
       }
-      const concertsData = await Concert.find(sanitize(dbQuery)).setOptions({strictQuery: false}).collation({
-        locale: 'en_US',
-        strength: 1,
+      const filteredDataQueryKeys = Object.entries(query).filter(([key, value]) =>
+        acceptedDataQueries.includes(key)
+      );
+      filteredDataQueryKeys.forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          if (value.includes('-')) {
+            return dbQuery[key] = value.replace('-', ' ');
+          }
+          dbQuery[key] = parseInt(value) ? parseInt(value) : value;
+        }
       });
+      const concertsData = await Concert.find(dbQuery)
+        .collation({
+          locale: 'en_US',
+          strength: 1,
+        });
       if (concertsData.length === 0) return next(notFoundErr);
       return res.json(concertsData);
     } catch (e) {
