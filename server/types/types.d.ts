@@ -62,5 +62,6 @@ export interface PriceRangeObj {
   $gte?: number;
 }
 export interface PossibleQueries {
-  [key: string]: number | string | PriceRangeObj;
+  [key: string]: number | string;
+  price? : PriceRangeObj;
 }
