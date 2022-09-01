@@ -8,6 +8,7 @@ import {
 } from '../types/types';
 import Concert from '../models/concerts.model';
 import { notFoundErr } from '../errors';
+import sanitize from 'mongo-sanitize';
 
 class ConcertMethods {
   constructor() {}
@@ -39,7 +40,7 @@ class ConcertMethods {
           }
         });
       }
-      const concertsData = await Concert.find(dbQuery).setOptions({strictQuery: false}).collation({
+      const concertsData = await Concert.find(sanitize(dbQuery)).setOptions({strictQuery: false}).collation({
         locale: 'en_US',
         strength: 1,
       });
